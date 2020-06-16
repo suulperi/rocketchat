@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb      
+spec:
+  selector:                  
+    name: mongodb
+  ports:
+  - port: 27017               
+    protocol: TCP 
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations: 
+   service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
+  name: mongodb-internal
+spec:
+  ports:
+  - port: 27017
+  clusterIP: None
+  selector:
+    name: mongodb
