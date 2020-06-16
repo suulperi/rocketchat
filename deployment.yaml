@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rocketchat
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: rocketchat
+  template:
+    metadata:
+      labels:
+         name: rocketchat
+    spec:
+      containers:
+      - name: rocketchat
+        image: docker.io/rocketchat/rocket.chat:0.63.3
+        ports:
+        - containerPort: 3000
+        env:
+        - name: MONGO_URL
+          value: mongodb://mongodb_user:mongodb_password@mongodb:27017/mongodb?replicaSet=rs0
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rocketchat     
+spec:
+  selector:                  
+    name: rocketchat
+  ports:
+  - protocol: TCP
+    port: 3000
+    targetPort: 3000 
+---
+apiVersion: v1
+kind: Route
+metadata:
+  name: rocketchat
+spec:
+  to:
+    kind: Service
+    name: rocketchat
+  port: 
+    targetPort: 3000
